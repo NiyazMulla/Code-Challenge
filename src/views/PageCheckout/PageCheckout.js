@@ -20,6 +20,7 @@ class PageCheckout extends Component {
     this.state = {
       cartList: [],
       promoCode: "",
+      discountAmount: 0,
       payAmount: Number.parseFloat(getTotalPrice()).toFixed(2),
     };
   }
@@ -44,9 +45,30 @@ class PageCheckout extends Component {
     sessionStorage.setItem("cartItems", JSON.stringify(cartItems));
 
     setTimeout(() => {
-      this.setState({
-        cartList: getCartItems(),
-      });
+      this.setState(
+        {
+          cartList: getCartItems(),
+        },
+        () => {
+          let totalAmount = getTotalPrice();
+          let payAmount = this.state.payAmount;
+          let errorMessage = "";
+          let promoCode = this.state.promoCode;
+          if (totalAmount > 5000) {
+            payAmount = totalAmount - this.state.discountAmount;
+          } else {
+            payAmount = totalAmount;
+            errorMessage = "total amount has to be greater than 5000";
+            promoCode = "";
+          }
+
+          this.setState({
+            promoCode,
+            errorMessage,
+            payAmount,
+          });
+        }
+      );
     }, 500);
   };
 
@@ -65,6 +87,7 @@ class PageCheckout extends Component {
             payAmount = totalAmount - discountAmount;
             console.log(payAmount);
             this.setState({
+              discountAmount,
               payAmount: Number.parseFloat(payAmount.toFixed(2)),
             });
           } else {
@@ -76,6 +99,7 @@ class PageCheckout extends Component {
             payAmount = totalAmount - discountAmount;
             console.log(payAmount);
             this.setState({
+              discountAmount,
               payAmount: Number.parseFloat(payAmount.toFixed(2)),
             });
           } else {
@@ -155,8 +179,10 @@ class PageCheckout extends Component {
                 <Input
                   type="text"
                   className="text-uppercase"
+                  value={this.state.promoCode}
                   onChange={(e) => {
                     this.setState({
+                      errorMessage: "",
                       promoCode: e.target.value,
                     });
                   }}
@@ -181,7 +207,13 @@ class PageCheckout extends Component {
                 );
               })}
             </>
-
+            {this.state.errorMessage ? (
+              <Row className="text-danger">
+                <div>{this.state.errorMessage}</div>
+              </Row>
+            ) : (
+              ""
+            )}
             <Row className="mt-2 text-success">
               <Col>Pay Amount:</Col>
               <Col>{this.state.payAmount}</Col>
