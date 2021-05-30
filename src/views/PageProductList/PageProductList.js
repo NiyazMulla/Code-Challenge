@@ -67,12 +67,13 @@ class PageProductList extends Component {
 
         <Row className="mx-0 mt-5 text-left justify-content-center">
           <Col className="fw-bold">
-            Note:
+            Improvement needed in following points :
             <div>
               I.After adding the items in cart please do refersh number of items
               will be displayed in header Like Badge :)
             </div>
             <div>II. Without refersh also we can do with the help of redux</div>
+            <div>III.In Cart Page Delete Functionality is not implented</div>
           </Col>
         </Row>
       </div>
